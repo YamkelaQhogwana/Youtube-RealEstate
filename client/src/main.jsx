@@ -13,7 +13,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Auth0Provider domain="dev-7t3kl4hb6o875wkm.us.auth0.com"
     clientId="XIGQGeJJRHhtfuiIH6SQNhtMznV7VU2j"
     authorizationParams={{
-      redirect_uri : "http://localhost:5173"
+      redirect_uri : "https://youtube-real-estate-xk5e.vercel.app"
     }}
     audience = "http://localhost:8000"
     scope ="openid profile email">

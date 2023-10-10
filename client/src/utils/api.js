@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 
 export const api = axios.create({
-    baseURL : "https://youtube-real-estate-2zom.vercel.app/api"
+    baseURL : "https://youtube-real-estate.vercel.app/api"
 })
 
 //function

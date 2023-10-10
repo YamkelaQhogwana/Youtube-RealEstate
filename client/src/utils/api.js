@@ -11,7 +11,7 @@ export const api = axios.create({
 export const getAllProperties = async()=>{
     try{
         const response = await api.get("/residency/allres", {
-            timeout : 30 * 1000,
+            timeout : 10 * 1000,
         })
 
         if(response.status ===400 || response.status ===500){
@@ -30,7 +30,7 @@ export const getAllProperties = async()=>{
 export const getProperty = async (id)=>{
      try{
         const response = await api.get(`/residency/${id}`, {
-            timeout : 30 * 1000,
+            timeout : 10 * 1000,
         })
 
         //bad requests

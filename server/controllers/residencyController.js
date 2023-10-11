@@ -16,6 +16,7 @@ export const createResidency = asyncHandler(async (req, res) => {
       userEmail,
     } = req.body.data;
 
+    // Input validation: Check if required fields are missing
     if (!title || !description || !price || !address || !country || !city) {
       return res.status(400).json({ error: "Incomplete data provided" });
     }
@@ -43,6 +44,13 @@ export const createResidency = asyncHandler(async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+
+
+
+
+
 
 
 

@@ -18,6 +18,7 @@ import { useContext } from "react"
 import { Button } from "@mantine/core"
 import { toast } from "react-toastify"
 import Heart from "../../components/Heart/Heart"
+import { removeBooking } from "../../utils/api"
 export const Property = () => {
  const { pathname } = useLocation();
   const id = pathname.split("/").slice(-1)[0];

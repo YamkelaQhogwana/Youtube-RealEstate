@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <MantineProvider>
     <Auth0Provider domain="dev-7t3kl4hb6o875wkm.us.auth0.com"
-    clientId="XIGQGeJJRHhtfuiIH6SQNhtMznV7VU2j"
+    clientId="6ys95NalNWyGn4yf9nOyEREyFV1azVu6"
     authorizationParams={{
       redirect_uri : "https://youtube-real-estate-xk5e.vercel.app"
     }}

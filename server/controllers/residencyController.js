@@ -3,20 +3,23 @@ import {prisma} from "../config/prismaConfig.js"
 
 //Function for the user to create a residency
 export const createResidency = asyncHandler(async (req, res) => {
-  const {
-    title,
-    description,
-    price,
-    address,
-    country,
-    city,
-    facilities,
-    image,
-    userEmail,
-  } = req.body.data;
-
-  console.log(req.body.data);
   try {
+    const {
+      title,
+      description,
+      price,
+      address,
+      country,
+      city,
+      facilities,
+      image,
+      userEmail,
+    } = req.body.data;
+
+    if (!title || !description || !price || !address || !country || !city) {
+      return res.status(400).json({ error: "Incomplete data provided" });
+    }
+
     const residency = await prisma.residency.create({
       data: {
         title,
@@ -31,14 +34,16 @@ export const createResidency = asyncHandler(async (req, res) => {
       },
     });
 
-    res.send({ message: "Residency created successfully", residency });
+    return res.status(201).json({ message: "Residency created successfully", residency });
   } catch (err) {
     if (err.code === "P2002") {
-      throw new Error("A residency with address already there");
+      return res.status(400).json({ error: "A residency with this address already exists" });
     }
-    throw new Error(err.message);
+    console.error("Error creating residency:", err);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 export const getAllResidencies = asyncHandler(async(req,res)=>{

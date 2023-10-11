@@ -19,50 +19,56 @@ import { Button } from "@mantine/core"
 import { toast } from "react-toastify"
 import Heart from "../../components/Heart/Heart"
 export const Property = () => {
-  const {pathname} = useLocation()
+ const { pathname } = useLocation();
+  const id = pathname.split("/").slice(-1)[0];
+  const { data, isLoading, isError } = useQuery(["resd", id], () =>
+    getProperty(id)
+  );
 
-  const id = pathname.split("/").slice(-1)[0];//3. To get the id pf the page
-  console.log(id);
-  const {data, isError, isLoading} = useQuery(["res", id], ()=>getProperty(id))
-  
-  console.log(data);
   const [modalOpened, setModalOpened] = useState(false);
-  const {validateLogin} = useAuthCheck();
-  const {user} = useAuth0();
-  const {userDetails : {token, bookings}, setUserDetails} = useContext(UserDetailContext);
+  const { validateLogin } = useAuthCheck();
+  const { user } = useAuth0();
 
+  const {
+    userDetails: { token, bookings },
+    setUserDetails,
+  } = useContext(UserDetailContext);
 
-  const {mutate : cancelBooking, isLoading : cancelling } = useMutation({
-    mutationFn : ()=> removeBooking(id, user?.email, token),
-    onSuccess : ()=>{
-     setUserDetails((prev)=>({
-      ...prev,
-      bookings : prev.bookings.filter((booking)=>bookings?.id !== id)
-     }))
-     toast.success("Booking cancelled")
-    } 
-  })
-  if(isLoading){
+  const { mutate: cancelBooking, isLoading: cancelling } = useMutation({
+    mutationFn: () => removeBooking(id, user?.email, token),
+    onSuccess: () => {
+      setUserDetails((prev) => ({
+        ...prev,
+        bookings: prev.bookings.filter((booking) => booking?.id !== id),
+      }));
+
+      toast.success("Booking cancelled", { position: "bottom-right" });
+    },
+  });
+
+  if (isLoading) {
     return (
       <div className="wrapper">
         <div className="flexCenter paddings">
-          <PuffLoader></PuffLoader>
+          <PuffLoader />
         </div>
       </div>
-    )
+    );
   }
 
-  if(isError){
-    <div className="wrapper">
-      <div className="flexCenter paddings">
-        Error while fetching the data
+  if (isError) {
+    return (
+      <div className="wrapper">
+        <div className="flexCenter paddings">
+          <span>Error while fetching the property details</span>
+        </div>
       </div>
-    </div>
+    );
   }
-  
+
   return (
     <div className="wrapper">
-       <div className="flexColStart paddings innerWidth property-container">
+      <div className="flexColStart paddings innerWidth property-container">
         {/* like button */}
         <div className="like">
           <Heart id={id}/>
@@ -120,40 +126,52 @@ export const Property = () => {
               </span>
             </div>
 
-           {/* Booking Button */}
-           
-           {bookings?.map((booking)=>booking.id).includes(id)?(
-           <>
-           <Button variant="outline" w={"100%"} color="red" >
-                <span>Cancel Booking</span>
-           </Button>
-           <span>
-            Your visit is already booked for {bookings.filter((booking)=>booking.id === id)[0].date}
-           </span>
-           </>
-           ) :<button className="button" onClick={()=>{
-            validateLogin() && setModalOpened(true)
-           }}>
-            Book your visit
-           </button>
-}
-           <BookingModal opened={modalOpened} setOpened={setModalOpened}
-           email = {user?.email}
-           propertyId = {id} >
+            {/* booking button */}
+            {bookings?.map((booking) => booking.id).includes(id) ? (
+              <>
+                <Button
+                  variant="outline"
+                  w={"100%"}
+                  color="red"
+                  onClick={() => cancelBooking()}
+                  disabled={cancelling}
+                >
+                  <span>Cancel booking</span>
+                </Button>
+                <span>
+                  Your visit already booked for date{" "}
+                  {bookings?.filter((booking) => booking?.id === id)[0].date}
+                </span>
+              </>
+            ) : (
+              <button
+                className="button"
+                onClick={() => {
+                  validateLogin() && setModalOpened(true);
+                }}
+              >
+                Book your visit
+              </button>
+            )}
 
-           </BookingModal>
-
-            
-           
+            <BookingModal
+              opened={modalOpened}
+              setOpened={setModalOpened}
+              propertyId={id}
+              email={user?.email}
+            />
           </div>
 
           {/* right side */}
           <div className="map">
-            <Map address={data?.address} city={data?.city} country={data?.country}  >
-            </Map>
+            <Map
+              address={data?.address}
+              city={data?.city}
+              country={data?.country}
+            />
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

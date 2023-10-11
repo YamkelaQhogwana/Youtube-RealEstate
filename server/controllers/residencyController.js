@@ -2,42 +2,44 @@ import asyncHandler from "express-async-handler"
 import {prisma} from "../config/prismaConfig.js"
 
 //Function for the user to create a residency
-export const createResidency = asyncHandler(async(req,res)=>{
-    //get the details from the request body it will be entered inside an object called data
-    const {title, description, price, address, country, city, facilities, image, userEmail} = req.body.data;
-    console.log(req.body.data)
-    
-    //operations to the database are carried out inside a try catch block
-    try{
-        //create a record with the said data
-        const residency = await prisma.residency.create({
-            data : {
-                title,
-                description,
-                price,
-                address,
-                country,
-                city,
-                facilities,
-                image,
-                owner: { connect: { email: userEmail } },
-            }
-        })
+export const createResidency = asyncHandler(async (req, res) => {
+  const {
+    title,
+    description,
+    price,
+    address,
+    country,
+    city,
+    facilities,
+    image,
+    userEmail,
+  } = req.body.data;
 
-        res.send({
-            message : "residency created successfully",
-            residency
-        })
+  console.log(req.body.data);
+  try {
+    const residency = await prisma.residency.create({
+      data: {
+        title,
+        description,
+        price,
+        address,
+        country,
+        city,
+        facilities,
+        image,
+        owner: { connect: { email: userEmail } },
+      },
+    });
 
-    } catch(err){
-        //duplicate entries
-        if(err.code === "P2002"){
-            throw new Error("A residency with this address already exists");
-        }
-        throw new Error(err.message)
+    res.send({ message: "Residency created successfully", residency });
+  } catch (err) {
+    if (err.code === "P2002") {
+      throw new Error("A residency with address already there");
     }
+    throw new Error(err.message);
+  }
+});
 
-})
 
 export const getAllResidencies = asyncHandler(async(req,res)=>{
     //find all the residencies in the residency table
